@@ -17,7 +17,7 @@ const environment = process.env.ENVIRONMENT || 'development';
 console.log('environment', environment);
 let connectionParams;
 if(environment === 'production'){
-  connectionParams = {connectionString: dbParams.production.connection}
+  connectionParams = {connectionString: dbParams.production.connection, ssl: true}
 } else {
   connectionParams = dbParams.development.connection;
 }
