@@ -13,20 +13,20 @@ console.log(PORT);
 // PG database client / connection setup
 const { Pool } = require("pg");
 const dbParams = require("./knexfile.js");
-const environment = process.env.ENVIRONMENT || 'development';
-console.log('environment', environment);
+const environment = process.env.ENVIRONMENT || "development";
+console.log("environment", environment);
 let connectionParams;
-if(environment === 'production'){
-    connectionParams = {
-      connectionString: dbParams.production.connection, 
-      ssl: {
-        rejectUnauthorized: false
-      },
-    }
+if (environment === "production") {
+  connectionParams = {
+    connectionString: dbParams.production.connection,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  };
 } else {
   connectionParams = dbParams.development.connection;
 }
-console.log('connectionParams', connectionParams);
+console.log("connectionParams", connectionParams);
 const db = new Pool(connectionParams);
 db.connect();
 const helpers = require("./src/helpers/dbhelper")(db);
@@ -120,7 +120,8 @@ const stripe = require("stripe")(
 const YOUR_DOMAIN = "http://localhost:3000/checkout";
 
 App.post("/create-session", async (req, res) => {
-  console.log("req :", req.body);
+  const order = req.body.order;
+  console.log("order :", order);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: [
@@ -128,10 +129,11 @@ App.post("/create-session", async (req, res) => {
         price_data: {
           currency: "usd",
           product_data: {
-            name: "Stubborn Attachments",
-            images: ["https://i.imgur.com/EHyR2nP.png"],
+            name: order.gig.title,
+            images: [order.gig.photo_one],
+            description: order.gig.description,
           },
-          unit_amount: 2000,
+          unit_amount: order.final_price * 100,
         },
         quantity: 1,
       },
