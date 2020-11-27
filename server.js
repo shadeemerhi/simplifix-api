@@ -7,7 +7,8 @@ const socketio = require("socket.io");
 const http = require("http");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
+console.log(PORT);
 
 // PG database client / connection setup
 const { Pool } = require("pg");
