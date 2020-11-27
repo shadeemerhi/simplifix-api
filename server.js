@@ -58,6 +58,15 @@ io.on("connection", (socket) => {
     // console.log(socket);
   });
 
+  socket.on('typing', (data) => {
+    console.log('in the socket')
+    if(data.typing === true) {
+      socket.broadcast.emit('display', data)
+    } else {
+      socket.broadcast.emit('display', data)
+    }
+  })
+
   socket.on("sendMessage", (message, user, callback) => {
     console.log("text", message);
     // console.log('this is the user', user.id);
