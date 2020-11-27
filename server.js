@@ -13,7 +13,9 @@ console.log(PORT);
 // PG database client / connection setup
 const { Pool } = require("pg");
 const dbParams = require("./knexfile.js");
-const db = new Pool(dbParams.development.connection);
+const environment = process.env.ENVIRONMENT || 'development';
+console.log('environment', environment);
+const db = new Pool(dbParams[environment].connection);
 db.connect();
 const helpers = require("./src/helpers/dbhelper")(db);
 App.use(cors({ origin: true, credentials: true }));

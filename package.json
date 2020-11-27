@@ -6,6 +6,7 @@
   "author": "sm-ta-cz",
   "license": "MIT",
   "scripts": {
+    "local": "nodemon server.js",
     "start": "node server.js"
   },
   "dependencies": {
