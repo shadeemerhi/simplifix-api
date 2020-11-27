@@ -17,5 +17,10 @@ module.exports = (helpers) => {
     .catch(err => res.status(400).send(err));
   });
 
+  router.patch("/orders/:id", (req, res) => {
+    const order = req.body;
+    helpers.changeOrder(order)
+    .then(data => res.send(data));
+  });
   return router;
 };
