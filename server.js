@@ -15,7 +15,14 @@ const { Pool } = require("pg");
 const dbParams = require("./knexfile.js");
 const environment = process.env.ENVIRONMENT || 'development';
 console.log('environment', environment);
-const db = new Pool(dbParams[environment].connection);
+let connectionParams;
+if(environment === 'production'){
+  connectionParams = {connectionString: dbParams.production.connection}
+} else {
+  connectionParams = dbParams.development.connection;
+}
+console.log('connectionParams', connectionParams);
+const db = new Pool(connectionParams);
 db.connect();
 const helpers = require("./src/helpers/dbhelper")(db);
 App.use(cors({ origin: true, credentials: true }));
