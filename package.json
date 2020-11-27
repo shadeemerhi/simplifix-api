@@ -1,12 +1,12 @@
 {
-  "name": "express-back-end",
+  "name": "server",
   "version": "1.0.0",
-  "description": "Boilerplate for the Express backend in an Express-React project",
+  "description": "",
   "main": "server.js",
-  "author": "garrettgsb",
+  "author": "sm-ta-cz",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "@material-ui/lab": "^4.0.0-alpha.56",
