@@ -50,18 +50,20 @@ io.on("connection", (socket) => {
   console.log("We have a new connection!");
 
   socket.on("join", ({ conv_id }, callback) => {
-    // console.log('at the server', conv_id);
-
     room = conv_id;
-
     socket.join(conv_id);
-    // console.log(socket);
   });
+
+  socket.on('typing', (data) => {
+    if(data.typing === true) {
+      socket.broadcast.emit('display', { data, id: socket.id } )
+    } else {
+      socket.broadcast.emit('display', { data, id: socket.id })
+    }
+  })
 
   socket.on("sendMessage", (message, user, callback) => {
     console.log("text", message);
-    // console.log('this is the user', user.id);
-    // console.log('this is the room', room);
     const queryParams = [room, user.id, message];
 
     db.query(
@@ -70,7 +72,6 @@ io.on("connection", (socket) => {
       RETURNING *;`,
       queryParams
     ).then(() => {
-      console.log("is this printing");
       io.to(room).emit("message", { user: user.id, text: message });
       // callback();
     });
