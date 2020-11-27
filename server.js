@@ -7,12 +7,27 @@ const socketio = require("socket.io");
 const http = require("http");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
+console.log(PORT);
 
 // PG database client / connection setup
 const { Pool } = require("pg");
 const dbParams = require("./knexfile.js");
-const db = new Pool(dbParams.development.connection);
+const environment = process.env.ENVIRONMENT || 'development';
+console.log('environment', environment);
+let connectionParams;
+if(environment === 'production'){
+    connectionParams = {
+      connectionString: dbParams.production.connection, 
+      ssl: {
+        rejectUnauthorized: false
+      },
+    }
+} else {
+  connectionParams = dbParams.development.connection;
+}
+console.log('connectionParams', connectionParams);
+const db = new Pool(connectionParams);
 db.connect();
 const helpers = require("./src/helpers/dbhelper")(db);
 App.use(cors({ origin: true, credentials: true }));
@@ -79,7 +94,6 @@ const conversations = require("./src/routes/conversations");
 const messages = require("./src/routes/messages");
 const validation = require("./src/routes/validation")(helpers);
 const orders = require("./src/routes/orders")(helpers);
-const transactions = require("./src/routes/transactions");
 
 // API Router
 App.use("/api", gigs(db));
@@ -90,7 +104,6 @@ App.use("/api", messages(db));
 // App.use("/api", messages(db));
 App.use("/", validation);
 App.use("/api", orders);
-App.use("/api", transactions(db));
 
 // Port Listening
 server.listen(PORT, () => {
@@ -124,8 +137,8 @@ App.post("/create-session", async (req, res) => {
       },
     ],
     mode: "payment",
-    success_url: `${YOUR_DOMAIN}?success=true`,
-    cancel_url: `${YOUR_DOMAIN}?canceled=true`,
+    success_url: `${YOUR_DOMAIN}/success`,
+    cancel_url: `${YOUR_DOMAIN}/failed`,
   });
   res.json({ id: session.id });
 });

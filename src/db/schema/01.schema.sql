@@ -48,13 +48,8 @@ CREATE TABLE orders (
   review TEXT,
   status VARCHAR(255) NOT NULL,
   order_date TIMESTAMP,
-  finished_date DATE
-);
-
-CREATE TABLE transactions (
-  id SERIAL PRIMARY KEY NOT NULL,
-  order_id INTEGER REFERENCES orders(id) ON DELETE CASCADE,
-  price INTEGER NOT NULL
+  finished_date DATE,
+  final_price INTEGER
 );
 
 CREATE TABLE conversations (
