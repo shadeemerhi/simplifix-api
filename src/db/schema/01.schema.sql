@@ -47,7 +47,7 @@ CREATE TABLE orders (
   rating INTEGER,
   review TEXT,
   status VARCHAR(255) NOT NULL,
-  order_date TIMESTAMP,
+  order_date TIMESTAMP WITH TIME ZONE,
   finished_date DATE,
   final_price INTEGER
 );

@@ -55,7 +55,7 @@ module.exports = (db) => {
   };
 
   const changeOrder = (params) => {
-    const {id, status, rating, review, order_date, finished_date} = params;
+    const {id, status, rating, review, order_date, finished_date, final_price} = params;
     const queryParams = [];
     let queryStr = `UPDATE orders SET `;
     if(status) {
@@ -83,9 +83,14 @@ module.exports = (db) => {
       queryParams.push(finished_date);
       queryStr += `finished_date = $${queryParams.length}`
     }
+    if(final_price) {
+      queryParams.length && (queryStr += ', ');
+      queryParams.push(final_price);
+      queryStr += `final_price = $${queryParams.length}`
+    }
     queryParams.push(id);
     queryStr += ` WHERE id = $${queryParams.length} RETURNING *;`;
-    console.log(queryStr, queryParams);
+    
     return db.query(queryStr, queryParams)
     .then(res => res.rows[0])
     .catch((error) => console.log("Error catched: ", error));
