@@ -7,12 +7,27 @@ const socketio = require("socket.io");
 const http = require("http");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
+console.log(PORT);
 
 // PG database client / connection setup
 const { Pool } = require("pg");
 const dbParams = require("./knexfile.js");
-const db = new Pool(dbParams.development.connection);
+const environment = process.env.ENVIRONMENT || 'development';
+console.log('environment', environment);
+let connectionParams;
+if(environment === 'production'){
+    connectionParams = {
+      connectionString: dbParams.production.connection, 
+      ssl: {
+        rejectUnauthorized: false
+      },
+    }
+} else {
+  connectionParams = dbParams.development.connection;
+}
+console.log('connectionParams', connectionParams);
+const db = new Pool(connectionParams);
 db.connect();
 const helpers = require("./src/helpers/dbhelper")(db);
 App.use(cors({ origin: true, credentials: true }));
