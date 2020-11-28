@@ -12,6 +12,11 @@ module.exports = (helpers) => {
     .then(data => {
       setTimeout(() => {
         res.send(data)
+        req.io.emit("update", JSON.stringify({
+          type: "orders",
+          action: "CREATE",
+          data
+        }));
       }, 5000);     
     })
     .catch(err => res.status(400).send(err));
@@ -20,7 +25,14 @@ module.exports = (helpers) => {
   router.patch("/orders/:id", (req, res) => {
     const order = req.body;
     helpers.changeOrder(order)
-    .then(data => res.send(data));
+    .then(data => {
+      res.send(data)
+      req.io.emit("update", JSON.stringify({
+        type: "orders",
+        action: "UPDATE",
+        data
+      }));
+    });
   });
   return router;
 };

@@ -45,11 +45,9 @@ const server = http.createServer(App);
 const io = socketio(server, { wsEngine: "ws" });
 //Another socket for concurrent state updates
 
-// const socketForUpdates = require("./src/socket")(socketio(server, {
-//   path: '/update'
-// }));
-
-
+const socketForUpdates = require("./src/socket")(socketio(server, {
+  path: '/update'
+}), App);
 
 
 io.on("connection", (socket) => {
