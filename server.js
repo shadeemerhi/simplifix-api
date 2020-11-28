@@ -12,20 +12,20 @@ const PORT = process.env.PORT || 8080;
 // PG database client / connection setup
 const { Pool } = require("pg");
 const dbParams = require("./knexfile.js");
-const environment = process.env.ENVIRONMENT || 'development';
+const environment = process.env.ENVIRONMENT || "development";
+console.log("environment", environment);
 let connectionParams;
-
-if(environment === 'production'){
-    connectionParams = {
-      connectionString: dbParams.production.connection, 
-      ssl: {
-        rejectUnauthorized: false
-      },
-    }
+if (environment === "production") {
+  connectionParams = {
+    connectionString: dbParams.production.connection,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  };
 } else {
   connectionParams = dbParams.development.connection;
 }
-
+console.log("connectionParams", connectionParams);
 const db = new Pool(connectionParams);
 db.connect();
 const helpers = require("./src/helpers/dbhelper")(db);
@@ -59,14 +59,13 @@ io.on("connection", (socket) => {
     socket.join(conv_id);
   });
 
-  socket.on('typing', (data) => {
-    if(data.typing === true) {
-      socket.to(room).emit('display', { data, id: socket.id } )
-    } 
-    else {
-      socket.to(room).emit('display', { data, id: socket.id })
+  socket.on("typing", (data) => {
+    if (data.typing === true) {
+      socket.to(room).emit("display", { data, id: socket.id });
+    } else {
+      socket.to(room).emit("display", { data, id: socket.id });
     }
-  })
+  });
 
   socket.on("sendMessage", (message, user, callback) => {
     console.log("text", message);
@@ -128,6 +127,7 @@ const YOUR_DOMAIN = "http://localhost:3000/checkout";
 
 App.post("/create-session", async (req, res) => {
   const order = req.body;
+  console.log("order :", order);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: [
@@ -137,6 +137,7 @@ App.post("/create-session", async (req, res) => {
           product_data: {
             name: order.gig.title,
             images: [order.gig.photo_one],
+            description: order.gig.description,
           },
           unit_amount: order.final_price * 100,
         },

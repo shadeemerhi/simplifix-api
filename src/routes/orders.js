@@ -2,9 +2,10 @@ const router = require("express").Router();
 
 module.exports = (helpers) => {
   router.get("/orders", (req, res) => {
-    helpers.getOrders()
-    .then(data => res.send(data))
-    .catch(err => res.status(400).send(err));
+    helpers
+      .getOrders()
+      .then((data) => res.send(data))
+      .catch((err) => res.status(400).send(err));
   });
   router.put("/orders", (req, res) => {
     const order = req.body;
@@ -32,7 +33,7 @@ module.exports = (helpers) => {
         action: "UPDATE",
         data
       }));
-    });
+    }).catch(err => res.status(400).send(err));
   });
   return router;
 };
