@@ -23,7 +23,7 @@ module.exports = (db) => {
     const { client_id, client_first, client_last, contractor_id, contractor_first, contractor_last } = req.body;
     db.query(
       `INSERT INTO conversations (client_id, client_first, client_last, contractor_id, contractor_first, contractor_last, clicked) 
-       VALUES (${client_id}, '${client_first}', '${client_last}', ${contractor_id}, '${contractor_first}', '${contractor_last}', true)
+       VALUES (${client_id}, '${client_first}', '${client_last}', ${contractor_id}, '${contractor_first}', '${contractor_last}', false)
        RETURNING *;`)
     .then(data => {
       console.log(data.rows[0])
