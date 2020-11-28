@@ -44,6 +44,14 @@ App.use(
 // Socket IO
 const server = http.createServer(App);
 const io = socketio(server, { wsEngine: "ws" });
+//Another socket for concurrent state updates
+
+// const socketForUpdates = require("./src/socket")(socketio(server, {
+//   path: '/update'
+// }));
+
+
+
 
 io.on("connection", (socket) => {
   let room;
@@ -121,18 +129,18 @@ const stripe = require("stripe")(
 const YOUR_DOMAIN = "http://localhost:3000/checkout";
 
 App.post("/create-session", async (req, res) => {
-  console.log("req :", req.body);
+  const order = req.body;
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: [
       {
         price_data: {
-          currency: "usd",
+          currency: "cad",
           product_data: {
-            name: "Stubborn Attachments",
-            images: ["https://i.imgur.com/EHyR2nP.png"],
+            name: order.gig.title,
+            images: [order.gig.photo_one],
           },
-          unit_amount: 2000,
+          unit_amount: order.final_price * 100,
         },
         quantity: 1,
       },
