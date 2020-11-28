@@ -8,14 +8,13 @@ const http = require("http");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
 const PORT = process.env.PORT || 8080;
-console.log(PORT);
 
 // PG database client / connection setup
 const { Pool } = require("pg");
 const dbParams = require("./knexfile.js");
 const environment = process.env.ENVIRONMENT || 'development';
-console.log('environment', environment);
 let connectionParams;
+
 if(environment === 'production'){
     connectionParams = {
       connectionString: dbParams.production.connection, 
@@ -26,7 +25,7 @@ if(environment === 'production'){
 } else {
   connectionParams = dbParams.development.connection;
 }
-console.log('connectionParams', connectionParams);
+
 const db = new Pool(connectionParams);
 db.connect();
 const helpers = require("./src/helpers/dbhelper")(db);
@@ -64,9 +63,10 @@ io.on("connection", (socket) => {
 
   socket.on('typing', (data) => {
     if(data.typing === true) {
-      socket.broadcast.emit('display', { data, id: socket.id } )
-    } else {
-      socket.broadcast.emit('display', { data, id: socket.id })
+      socket.to(room).emit('display', { data, id: socket.id } )
+    } 
+    else {
+      socket.to(room).emit('display', { data, id: socket.id })
     }
   })
 
