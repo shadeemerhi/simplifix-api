@@ -125,7 +125,7 @@ const stripe = require("stripe")(
 const YOUR_DOMAIN = "http://localhost:3000/checkout";
 
 App.post("/create-session", async (req, res) => {
-  const order = req.body.order;
+  const order = req.body;
   console.log("order :", order);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
