@@ -59,7 +59,8 @@ CREATE TABLE conversations (
   client_last VARCHAR(255) NOT NULL,
   contractor_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   contractor_first VARCHAR(255) NOT NULL,
-  contractor_last VARCHAR(255) NOT NULL
+  contractor_last VARCHAR(255) NOT NULL,
+  clicked boolean DEFAULT false
 );
 
 CREATE TABLE messages (
