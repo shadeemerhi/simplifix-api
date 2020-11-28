@@ -8,7 +8,6 @@ const http = require("http");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
 const PORT = process.env.PORT || 8080;
-console.log(PORT);
 
 // PG database client / connection setup
 const { Pool } = require("pg");
@@ -44,6 +43,11 @@ App.use(
 // Socket IO
 const server = http.createServer(App);
 const io = socketio(server, { wsEngine: "ws" });
+//Another socket for concurrent state updates
+
+// const socketForUpdates = require("./src/socket")(socketio(server, {
+//   path: '/update'
+// }));
 
 io.on("connection", (socket) => {
   let room;
@@ -54,13 +58,13 @@ io.on("connection", (socket) => {
     socket.join(conv_id);
   });
 
-  socket.on('typing', (data) => {
-    if(data.typing === true) {
-      socket.broadcast.emit('display', { data, id: socket.id } )
+  socket.on("typing", (data) => {
+    if (data.typing === true) {
+      socket.to(room).emit("display", { data, id: socket.id });
     } else {
-      socket.broadcast.emit('display', { data, id: socket.id })
+      socket.to(room).emit("display", { data, id: socket.id });
     }
-  })
+  });
 
   socket.on("sendMessage", (message, user, callback) => {
     console.log("text", message);
@@ -128,7 +132,7 @@ App.post("/create-session", async (req, res) => {
     line_items: [
       {
         price_data: {
-          currency: "usd",
+          currency: "cad",
           product_data: {
             name: order.gig.title,
             images: [order.gig.photo_one],
