@@ -31,10 +31,6 @@ module.exports = (db) => {
     })
   );
 
-  // router.get('/gigs/:category/:id', (req, res) => {
-  //   db.query(`SELECT * FROM gigs WHERE id = ${req.params.id}`)
-  // });
-
   router.put("/gigs/", (req, res) => {
     const gig = req.body;
     const queryParams = [
