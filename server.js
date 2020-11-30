@@ -13,7 +13,6 @@ const PORT = process.env.PORT || 8080;
 const { Pool } = require("pg");
 const dbParams = require("./knexfile.js");
 const environment = process.env.ENVIRONMENT || "development";
-console.log("environment", environment);
 let connectionParams;
 if (environment === "production") {
   connectionParams = {
@@ -25,7 +24,6 @@ if (environment === "production") {
 } else {
   connectionParams = dbParams.development.connection;
 }
-console.log("connectionParams", connectionParams);
 const db = new Pool(connectionParams);
 db.connect();
 const helpers = require("./src/helpers/dbhelper")(db);
@@ -45,10 +43,12 @@ const server = http.createServer(App);
 const io = socketio(server, { wsEngine: "ws" });
 //Another socket for concurrent state updates
 
-const socketForUpdates = require("./src/socket")(socketio(server, {
-  path: '/update'
-}), App);
-
+const socketForUpdates = require("./src/socket")(
+  socketio(server, {
+    path: "/update",
+  }),
+  App
+);
 
 io.on("connection", (socket) => {
   let room;
@@ -68,7 +68,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMessage", (message, user, callback) => {
-    console.log("text", message);
     const queryParams = [room, user.id, message];
 
     db.query(
@@ -80,7 +79,6 @@ io.on("connection", (socket) => {
       io.to(room).emit("message", { user: user.id, text: message });
       // callback();
     });
-    // .catch(error => console.log(error));
   });
 
   socket.on("disconnect", () => {
@@ -92,6 +90,7 @@ io.on("connection", (socket) => {
 App.use(BodyParser.urlencoded({ extended: false }));
 App.use(BodyParser.json());
 App.use(Express.static("public"));
+
 // Import Routers
 const gigs = require("./src/routes/gigs");
 const users = require("./src/routes/users");
@@ -107,7 +106,6 @@ App.use("/api", users(db));
 App.use("/api", categories(db));
 App.use("/api", conversations(db));
 App.use("/api", messages(db));
-// App.use("/api", messages(db));
 App.use("/", validation);
 App.use("/api", orders);
 
@@ -127,7 +125,6 @@ const YOUR_DOMAIN = "http://localhost:3000/checkout";
 
 App.post("/create-session", async (req, res) => {
   const order = req.body;
-  console.log("order :", order);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: [

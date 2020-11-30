@@ -55,45 +55,54 @@ module.exports = (db) => {
   };
 
   const changeOrder = (params) => {
-    const {id, status, rating, review, order_date, finished_date, final_price} = params;
+    const {
+      id,
+      status,
+      rating,
+      review,
+      order_date,
+      finished_date,
+      final_price,
+    } = params;
     const queryParams = [];
     let queryStr = `UPDATE orders SET `;
-    if(status) {
-      queryParams.length && (queryStr += ', ');
+    if (status) {
+      queryParams.length && (queryStr += ", ");
       queryParams.push(status);
-      queryStr += `status = $${queryParams.length}`
+      queryStr += `status = $${queryParams.length}`;
     }
-    if(rating) {
-      queryParams.length && (queryStr += ', ');
+    if (rating) {
+      queryParams.length && (queryStr += ", ");
       queryParams.push(rating);
-      queryStr += `rating = $${queryParams.length}`
+      queryStr += `rating = $${queryParams.length}`;
     }
-    if(review) {
-      queryParams.length && (queryStr += ', ');
+    if (review) {
+      queryParams.length && (queryStr += ", ");
       queryParams.push(review);
-      queryStr += `review = $${queryParams.length}`
+      queryStr += `review = $${queryParams.length}`;
     }
-    if(order_date) {
-      queryParams.length && (queryStr += ', ');
+    if (order_date) {
+      queryParams.length && (queryStr += ", ");
       queryParams.push(order_date);
-      queryStr += `order_date = $${queryParams.length}`
+      queryStr += `order_date = $${queryParams.length}`;
     }
-    if(finished_date) {
-      queryParams.length && (queryStr += ', ');
+    if (finished_date) {
+      queryParams.length && (queryStr += ", ");
       queryParams.push(finished_date);
-      queryStr += `finished_date = $${queryParams.length}`
+      queryStr += `finished_date = $${queryParams.length}`;
     }
-    if(final_price) {
-      queryParams.length && (queryStr += ', ');
+    if (final_price) {
+      queryParams.length && (queryStr += ", ");
       queryParams.push(final_price);
-      queryStr += `final_price = $${queryParams.length}`
+      queryStr += `final_price = $${queryParams.length}`;
     }
     queryParams.push(id);
     queryStr += ` WHERE id = $${queryParams.length} RETURNING *;`;
-    
-    return db.query(queryStr, queryParams)
-    .then(res => res.rows[0])
-    .catch((error) => console.log("Error catched: ", error));
-  }
+
+    return db
+      .query(queryStr, queryParams)
+      .then((res) => res.rows[0])
+      .catch((error) => console.log("Error catched: ", error));
+  };
   return { getUserByEmail, getUserById, createOrder, getOrders, changeOrder };
 };

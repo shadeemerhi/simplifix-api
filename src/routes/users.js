@@ -4,9 +4,10 @@ const router = require("express").Router();
 
 module.exports = (db) => {
   router.get("/users", (req, res) =>
-    db.query(`SELECT * FROM users`)
-    .then(data => res.send(data.rows))
-    .catch(err => res.status(400).send(err))
+    db
+      .query(`SELECT * FROM users`)
+      .then((data) => res.send(data.rows))
+      .catch((err) => res.status(400).send(err))
   );
 
   router.get("/users/:id", (req, res) => {
