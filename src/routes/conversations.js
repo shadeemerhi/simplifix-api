@@ -27,13 +27,24 @@ module.exports = (db) => {
       contractor_last,
     } = req.body;
     db.query(
-      `INSERT INTO conversations (client_id, client_first, client_last, contractor_id, contractor_first, contractor_last) 
-      VALUES (${client_id}, '${client_first}', '${client_last}', ${contractor_id}, '${contractor_first}', '${contractor_last}')
-      RETURNING *;`
-    ).then((data) => {
-      res.send(data.rows[0]);
-    });
+      `INSERT INTO conversations (client_id, client_first, client_last, contractor_id, contractor_first, contractor_last, clicked) 
+       VALUES (${client_id}, '${client_first}', '${client_last}', ${contractor_id}, '${contractor_first}', '${contractor_last}', false)
+       RETURNING *;`)
+    .then(data => {
+      console.log(data.rows[0])
+      res.send(data.rows[0])
+    })
   });
+
+  router.patch('/conversations/:conversation_id', (req, res) => {
+    const queryParams = [req.params.conversation_id];
+    console.log('is this happening')
+    db.query(`UPDATE conversations SET clicked = true WHERE id = $1 RETURNING *`, queryParams)
+    .then(data => {
+      res.send(data.rows[0]);
+    })
+  })
+
 
   return router;
 };
